@@ -1,29 +1,12 @@
 const { validationResult, check } = require('express-validator')
-const User = require('../models/user')
-const Role = require('../models/role')
 const {
-    EXISTS_EMAIL,
     REQUIRED_NAME,
-    INVALID_EMAIL,
-    INVALID_ROLE,
     INVALID_PASSWORD,
 } = require('../utils/constants')
-
-const checkEmail = async (email = '') => {
-    const exists = await User.findOne({ email })
-
-    if (exists) {
-        throw new Error(EXISTS_EMAIL)
-    }
-}
-
-const checkRole = async (role = '') => {
-    const exists = await Role.findOne({ role })
-
-    if (!exists) {
-        throw new Error(INVALID_ROLE)
-    }
-}
+const {
+    checkEmail,
+    checkRole
+} = require('../utils/db_validators')
 
 const validate = async (req, res, next) => {
     // console.log({ req }, req.method)
