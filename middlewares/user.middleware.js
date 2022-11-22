@@ -9,30 +9,12 @@ const {
     INVALID_PASSWORD,
 } = require('../utils/constants')
 
-const validate = async (req, res, next) => {
-    // console.log({ req }, req.method)
-    const errors = validationResult(req)
+const checkEmail = async (email = '') => {
+    const exists = await User.findOne({ email })
 
-    if (!errors.isEmpty()) {
-        return res.status(400).json({
-            message: errors
-        })
+    if (exists) {
+        throw new Error(EXISTS_EMAIL)
     }
-
-    const {
-        email
-    } = req.body
-
-    // Check exists email
-    const existsEmail = await User.findOne({ email })
-
-    if (existsEmail) {
-        return res.status(400).json({
-            message: EXISTS_EMAIL
-        })
-    }
-
-    next()
 }
 
 const checkRole = async (role = '') => {
@@ -43,9 +25,22 @@ const checkRole = async (role = '') => {
     }
 }
 
+const validate = async (req, res, next) => {
+    // console.log({ req }, req.method)
+    const errors = validationResult(req)
+
+    if (!errors.isEmpty()) {
+        return res.status(400).json({
+            message: errors
+        })
+    }
+
+    next()
+}
+
 module.exports = [
     check('name', REQUIRED_NAME).not().isEmpty(),
-    check('email', INVALID_EMAIL).isEmail(),
+    check('email').isEmail().custom(checkEmail),
     check('role').custom(checkRole),
     check('password', INVALID_PASSWORD).isLength({ min: 6 }),
     (req, res, next) => validate(req, res, next)
