@@ -11,9 +11,7 @@ const userMiddleware = require('../middlewares/user.middleware')
 const router = Router()
 
 router.get('/', getUser)
-router.post('/', [
-    userMiddleware,
-], addUser)
+router.post('/', userMiddleware, addUser)
 router.put('/:id', updateUser)
 router.delete('/:id', deleteUser)
 

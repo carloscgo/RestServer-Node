@@ -10,6 +10,7 @@ const {
 } = require('../utils/constants')
 
 const validate = async (req, res, next) => {
+    // console.log({ req }, req.method)
     const errors = validationResult(req)
 
     if (!errors.isEmpty()) {
