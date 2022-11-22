@@ -35,16 +35,18 @@ const validate = async (req, res, next) => {
     next()
 }
 
+const checkRole = async (role = '') => {
+    const exists = await Role.findOne({ role })
+
+    if (!exists) {
+        throw new Error(INVALID_ROLE)
+    }
+}
+
 module.exports = [
     check('name', REQUIRED_NAME).not().isEmpty(),
     check('email', INVALID_EMAIL).isEmail(),
-    check('role').custom(async (role = '') => {
-        const exists = await Role.findOne({ role })
-
-        if (!exists) {
-            throw new Error(INVALID_ROLE)
-        }
-    }),
+    check('role').custom(checkRole),
     check('password', INVALID_PASSWORD).isLength({ min: 6 }),
     (req, res, next) => validate(req, res, next)
 ]
